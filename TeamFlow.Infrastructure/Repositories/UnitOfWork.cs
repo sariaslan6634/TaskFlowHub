@@ -21,6 +21,8 @@ namespace TeamFlow.Infrastructure.Repositories
         public INotificationRepository Notifications { get; }
         public IMessageRepository Messages { get; }
         public IAuditLogRepository AuditLogs { get; }
+        public ICommentRepository Comments { get; }
+
 
         public UnitOfWork(AppDbContext context)
         {

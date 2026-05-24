@@ -1,58 +1,67 @@
-﻿using System.Net;
+﻿// Middleware/ExceptionMiddleware.cs
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Text.Json;
 
-namespace TeamFlow.WebAPI.Middlewar
+namespace TeamFlow.WebAPI.Middleware;
+
+public class ExceptionMiddleware
 {
-    public class ExceptionMiddleware
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
+        _next = next;
+        _logger = logger;
+    }
 
-        public ExceptionMiddleware(
-            RequestDelegate next,
-            ILogger<ExceptionMiddleware> logger)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
         {
-            _next = next;
-            _logger = logger;
+            await _next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (Exception ex)
         {
-            try
-            {
-                await _next(context); // Bir sonraki middleware'e geç
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Beklenmeyen bir hata oluştu.");
-                await HandleExceptionAsync(context, ex);
-            }
-        }
+            _logger.LogError(ex,
+                "Hata oluştu. Path: {Path} Method: {Method}",
+                context.Request.Path,
+                context.Request.Method,
+                ex.InnerException?.Message); 
 
-        private static async Task HandleExceptionAsync(
-            HttpContext context,
-            Exception exception)
+            await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private static async Task HandleExceptionAsync(
+        HttpContext context,
+        Exception exception)
+    {
+        context.Response.ContentType = "application/json";
+
+        var (statusCode, message) = exception switch
         {
-            context.Response.ContentType = "application/json";
+            KeyNotFoundException => (HttpStatusCode.NotFound, exception.Message),
+            UnauthorizedAccessException => (HttpStatusCode.Unauthorized, exception.Message),
+            ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
+            DbUpdateException dbEx => (HttpStatusCode.InternalServerError,
+                dbEx.InnerException?.Message ?? dbEx.Message),
+            _ => (HttpStatusCode.InternalServerError, "Sunucu hatası oluştu.")
+        };
 
-            var (statusCode, message) = exception switch
-            {
-                KeyNotFoundException => (HttpStatusCode.NotFound, exception.Message),
-                UnauthorizedAccessException => (HttpStatusCode.Unauthorized, exception.Message),
-                ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
-                _ => (HttpStatusCode.InternalServerError, "Sunucu hatası oluştu.")
-            };
 
-            context.Response.StatusCode = (int)statusCode;
+        context.Response.StatusCode = (int)statusCode;
 
-            var response = new
-            {
-                StatusCode = (int)statusCode,
-                Message = message
-            };
+        var response = new
+        {
+            StatusCode = (int)statusCode,
+            Message = message
+        };
 
-            var json = JsonSerializer.Serialize(response);
-            await context.Response.WriteAsync(json);
-        }
+        var json = JsonSerializer.Serialize(response);
+        await context.Response.WriteAsync(json);
     }
 }

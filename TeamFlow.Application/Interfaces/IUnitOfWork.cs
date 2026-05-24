@@ -17,6 +17,7 @@ namespace TeamFlow.Application.Interfaces
         INotificationRepository Notifications { get; }
         IMessageRepository Messages { get; }
         IAuditLogRepository AuditLogs { get; }
+        ICommentRepository Comments { get; }
 
         Task<int> SaveChangesAsync();
     }

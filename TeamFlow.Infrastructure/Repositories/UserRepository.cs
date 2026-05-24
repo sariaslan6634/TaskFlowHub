@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TeamFlow.Application.Common;
 using TeamFlow.Application.Interfaces.Repositories;
 using TeamFlow.Domain.Entities;
 using TeamFlow.Infrastructure.Persistence;
@@ -45,6 +46,25 @@ namespace TeamFlow.Infrastructure.Repositories
         public async Task<User?> GetByIdAsync(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        }
+
+        public async Task<PaginatedResult<User>> GetPagedAsync(PaginationParams pagination)
+        {
+            var totalCount = await _context.Users.Where(x => !x.IsDeleted).CountAsync();
+
+            var items = await _context.Users
+                .Where(x => !x.IsDeleted)
+                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
+            return new PaginatedResult<User>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pagination.PageNumber,
+                PageSize = pagination.PageSize
+            };
         }
 
         public async Task<bool> IsEmailExistsAsync(string email)

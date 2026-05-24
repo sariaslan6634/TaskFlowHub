@@ -20,7 +20,8 @@ namespace TeamFlow.Infrastructure.Persistence.Configurations
             // Optimistic Concurrency
             builder.Property(x => x.RowVersion)
                 .IsRowVersion()
-                .IsConcurrencyToken();
+                .IsConcurrencyToken()
+                .ValueGeneratedOnAddOrUpdate();
 
             builder.HasOne(x => x.Sprint)
                 .WithMany(x => x.Tasks)

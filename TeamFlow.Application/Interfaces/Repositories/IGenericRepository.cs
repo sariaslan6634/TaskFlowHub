@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TeamFlow.Application.Common;
 
 namespace TeamFlow.Application.Interfaces.Repositories
 {
@@ -10,6 +11,7 @@ namespace TeamFlow.Application.Interfaces.Repositories
     {
         Task<T?> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
+        Task<PaginatedResult<T>> GetPagedAsync(PaginationParams pagination);
         Task AddAsync(T entity);
         void Update(T entity);
         void Delete(T entity);
