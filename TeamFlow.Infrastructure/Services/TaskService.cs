@@ -178,5 +178,11 @@ namespace TeamFlow.Infrastructure.Services
                 PageSize = pagination.PageSize
             };
         }
+
+        public async Task<IEnumerable<TaskResponseDto>> GetByAssignedUserAsync(int userId)
+        {
+            var tasks = await _unitOfWork.Tasks.GetByAssignedUserIdAsync(userId);
+            return _mapper.Map<IEnumerable<TaskResponseDto>>(tasks);
+        }
     }
 }

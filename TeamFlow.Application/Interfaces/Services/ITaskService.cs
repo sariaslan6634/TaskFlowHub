@@ -19,5 +19,6 @@ namespace TeamFlow.Application.Interfaces.Services
         Task DeleteAsync(int id);
         Task<TaskResponseDto> ChangeStatusAsync(int id, ChangeTaskStatusDto request);
         Task<TaskResponseDto> AssignUserAsync(int id, int userId);
+        Task<IEnumerable<TaskResponseDto>> GetByAssignedUserAsync(int userId);
     }
 }

@@ -25,10 +25,20 @@ try
     builder.Services.AddApplicationServices();
     builder.Services.AddValidationServices();
     builder.Services.AddSignalRServices();
+    builder.Services.AddRateLimitingServices();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerServices();
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", policy =>
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader());
+    });
+
 
     var app = builder.Build();
 
@@ -39,12 +49,15 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
     app.UseHttpsRedirection();
 
     app.UseSerilogRequestLogging(); // Her request otomatik loglanır
 
     app.UseRateLimiter();
+
+    app.UseCors("AllowAll");
 
     app.UseAuthentication();
     app.UseAuthorization();

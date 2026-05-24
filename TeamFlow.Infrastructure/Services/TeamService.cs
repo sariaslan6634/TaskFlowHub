@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TeamFlow.Application.DTOs.Team;
 using TeamFlow.Application.Interfaces;
 using TeamFlow.Application.Interfaces.Services;
 using TeamFlow.Domain.Entities;
 using TeamFlow.Domain.Enums;
+using TeamFlow.Infrastructure.Persistence;
 
 namespace TeamFlow.Infrastructure.Services
 {
@@ -16,11 +12,13 @@ namespace TeamFlow.Infrastructure.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly AppDbContext _context;
 
-        public TeamService(IUnitOfWork unitOfWork, IMapper mapper)
+        public TeamService(IUnitOfWork unitOfWork, IMapper mapper, AppDbContext context)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<TeamResponseDto> GetByIdAsync(int id)
@@ -44,6 +42,10 @@ namespace TeamFlow.Infrastructure.Services
             await _unitOfWork.Teams.AddAsync(team);
             await _unitOfWork.SaveChangesAsync();
 
+            // Takımı oluşturan kişiyi otomatik üye yap
+            // userId'yi servis katmanına taşımamız gerekiyor
+            // Şimdilik SaveChanges sonrası team.Id gelir
+
             return _mapper.Map<TeamResponseDto>(team);
         }
 
@@ -57,12 +59,6 @@ namespace TeamFlow.Infrastructure.Services
             if (user == null)
                 throw new KeyNotFoundException($"Kullanıcı bulunamadı. Id: {userId}");
 
-            // Kullanıcı zaten takımda mı?
-            var existingMember = team.Members?
-                .FirstOrDefault(x => x.UserId == userId && !x.IsDeleted);
-            if (existingMember != null)
-                throw new ArgumentException("Kullanıcı zaten bu takımın üyesi.");
-
             var teamMember = new TeamMember
             {
                 TeamId = teamId,
@@ -71,6 +67,7 @@ namespace TeamFlow.Infrastructure.Services
                 CreatedAt = DateTime.UtcNow
             };
 
+            await _context.TeamMembers.AddAsync(teamMember);
             await _unitOfWork.SaveChangesAsync();
         }
 

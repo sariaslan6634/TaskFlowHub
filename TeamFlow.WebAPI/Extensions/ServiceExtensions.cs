@@ -163,8 +163,7 @@ namespace TeamFlow.WebAPI.Extensions
 
             return services;
         }
-        public static IServiceCollection AddRateLimitingServices(
-    this IServiceCollection services)
+        public static IServiceCollection AddRateLimitingServices(this IServiceCollection services)
         {
             services.AddRateLimiter(options =>
             {

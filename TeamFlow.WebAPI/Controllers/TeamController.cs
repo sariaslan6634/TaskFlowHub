@@ -38,9 +38,14 @@ namespace TeamFlow.WebAPI.Controllers
         public async Task<IActionResult> Create([FromBody] CreateTeamDto request)
         {
             var result = await _teamService.CreateAsync(request);
+
+            // Takımı oluşturan kişiyi üye yap
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim != null)
+                await _teamService.AddMemberAsync(result.Id, int.Parse(userIdClaim));
+
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-
         [HttpPost("{teamId}/members/{userId}")]
         public async Task<IActionResult> AddMember(int teamId, int userId)
         {

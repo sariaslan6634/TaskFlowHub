@@ -27,7 +27,12 @@ namespace TeamFlow.WebAPI.Controllers
             var result = await _taskService.GetPagedAsync(sprintId, pagination);
             return Ok(result);
         }
-
+        [HttpGet("assigned/{userId}")]
+        public async Task<IActionResult> GetByAssignedUser(int userId)
+        {
+            var result = await _taskService.GetByAssignedUserAsync(userId);
+            return Ok(result);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

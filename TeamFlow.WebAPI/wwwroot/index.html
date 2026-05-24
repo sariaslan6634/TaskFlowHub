@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeamFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2535;
+  --bg4: #252d3d;
+  --border: #2a3347;
+  --border2: #3a4560;
+  --text: #e8eaf0;
+  --text2: #8b93a7;
+  --text3: #5a6378;
+  --accent: #4f8ef7;
+  --accent2: #3a7be8;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --red: #f87171;
+  --purple: #a78bfa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+input,select,textarea,button{font-family:'DM Sans',sans-serif}
+.hidden{display:none!important}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+/* LOGIN */
+#login-page{display:flex;min-height:100vh;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden}
+#login-page::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:100%;max-width:420px;position:relative;z-index:1}
+.login-brand{display:flex;align-items:center;gap:10px;margin-bottom:2rem}
+.login-brand-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:#fff}
+.login-brand-name{font-size:20px;font-weight:600;letter-spacing:-0.5px}
+.login-title{font-size:22px;font-weight:500;margin-bottom:0.5rem;letter-spacing:-0.3px}
+.login-sub{font-size:14px;color:var(--text2);margin-bottom:2rem}
+.form-group{margin-bottom:1.25rem}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:8px}
+.form-input{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none;transition:border-color 0.15s}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--text3)}
+select.form-input option{background:var(--bg3)}
+textarea.form-input{resize:vertical;min-height:80px}
+.btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text);transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--bg4);border-color:var(--border2)}
+.btn-primary{background:var(--accent);color:#fff;border:none;width:100%;padding:11px;font-size:14px;justify-content:center}
+.btn-primary:hover{background:var(--accent2)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-danger{background:rgba(248,113,113,0.1);color:var(--red);border-color:rgba(248,113,113,0.2)}
+.btn-danger:hover{background:rgba(248,113,113,0.2)}
+.btn-green{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2)}
+.btn-green:hover{background:rgba(52,211,153,0.2)}
+.error-msg{font-size:13px;color:var(--red);margin-bottom:1rem;padding:10px 14px;background:rgba(248,113,113,0.1);border-radius:8px;display:none}
+.link{color:var(--accent);cursor:pointer;font-size:13px}
+.link:hover{text-decoration:underline}
+
+/* APP LAYOUT */
+#app-page{display:none;min-height:100vh;flex-direction:row}
+#app-page.active{display:flex}
+#login-page.active{display:flex}
+
+.sidebar{width:230px;min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh}
+.sidebar-brand{padding:1.25rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.brand-icon{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff}
+.brand-name{font-size:16px;font-weight:600;letter-spacing:-0.3px}
+.nav{padding:0.75rem 0;flex:1}
+.nav-section{padding:0.5rem 1rem 0.25rem;font-size:10px;font-weight:500;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1rem;font-size:13px;font-weight:400;color:var(--text2);cursor:pointer;transition:all 0.1s;border-left:2px solid transparent;margin:1px 0}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.7}
+.nav-item:hover{color:var(--text);background:var(--bg3)}
+.nav-item.active{color:var(--accent);background:rgba(79,142,247,0.08);border-left-color:var(--accent);font-weight:500}
+.nav-item.active svg{opacity:1}
+.sidebar-user{padding:1rem;border-top:1px solid var(--border)}
+.user-avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0}
+.user-meta{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:var(--text2)}
+.btn-logout{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:6px;transition:color 0.15s}
+.btn-logout:hover{color:var(--red)}
+
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+.topbar{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:10}
+.topbar-title{font-size:18px;font-weight:500;letter-spacing:-0.3px}
+.content{padding:1.5rem}
+
+/* SECTIONS */
+.section{display:none}
+.section.active{display:block}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.stat-label{font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.stat-value{font-size:28px;font-weight:600;letter-spacing:-1px}
+.stat-sub{font-size:12px;color:var(--text3);margin-top:4px}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;transition:border-color 0.15s}
+.card:hover{border-color:var(--border2)}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.75rem}
+.card-title{font-size:15px;font-weight:500}
+.card-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:1rem}
+.card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.badge{font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px;letter-spacing:0.2px}
+.badge-blue{background:rgba(79,142,247,0.15);color:#7eb3ff}
+.badge-green{background:rgba(52,211,153,0.15);color:#34d399}
+.badge-amber{background:rgba(251,191,36,0.15);color:#fbbf24}
+.badge-red{background:rgba(248,113,113,0.15);color:#f87171}
+.badge-gray{background:rgba(139,147,167,0.15);color:#8b93a7}
+.badge-purple{background:rgba(167,139,250,0.15);color:#a78bfa}
+.card-actions{display:flex;gap:6px}
+
+/* PAGE HEADER */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.page-hdr-left h2{font-size:18px;font-weight:500;letter-spacing:-0.3px}
+.page-hdr-left p{font-size:13px;color:var(--text2);margin-top:2px}
+
+/* BOARD */
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.board-col{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;min-height:200px}
+.board-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.board-col-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:var(--text2)}
+.board-count{font-size:11px;color:var(--text3);background:var(--bg3);padding:2px 7px;border-radius:10px}
+.task-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.75rem;margin-bottom:8px;cursor:pointer;transition:all 0.15s}
+.task-card:hover{border-color:var(--border2);background:var(--bg4)}
+.task-card-title{font-size:13px;font-weight:500;margin-bottom:8px;line-height:1.4}
+.task-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.task-due{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:3px}
+
+/* SPRINT */
+.sprint-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem;transition:border-color 0.15s}
+.sprint-item:hover{border-color:var(--border2)}
+.sprint-item-header{display:flex;align-items:flex-start;justify-content:space-between}
+.sprint-name{font-size:15px;font-weight:500}
+.sprint-meta{font-size:12px;color:var(--text2);margin-top:4px;display:flex;gap:12px}
+.sprint-meta span{display:flex;align-items:center;gap:4px}
+.sprint-actions{display:flex;gap:8px;align-items:center}
+
+/* CHAT */
+.chat-layout{display:grid;grid-template-columns:260px 1fr;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;height:calc(100vh - 200px);background:var(--bg2)}
+.chat-sidebar{border-right:1px solid var(--border);overflow-y:auto}
+.chat-sidebar-header{padding:1rem;border-bottom:1px solid var(--border);font-size:13px;font-weight:500;color:var(--text2)}
+.chat-item{padding:12px 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.chat-item:hover{background:var(--bg3)}
+.chat-item.active{background:var(--bg3)}
+.chat-item-name{font-size:13px;font-weight:500}
+.chat-item-preview{font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-window{display:flex;flex-direction:column}
+.chat-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.chat-avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0}
+.chat-header-info{}
+.chat-header-name{font-size:14px;font-weight:500}
+.chat-header-status{font-size:11px;color:var(--green)}
+.chat-messages{flex:1;padding:1rem;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:72%;padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.5}
+.msg-out{align-self:flex-end;background:var(--accent);color:#fff;border-radius:10px 10px 2px 10px}
+.msg-in{align-self:flex-start;background:var(--bg3);color:var(--text);border-radius:10px 10px 10px 2px}
+.msg-time{font-size:10px;opacity:0.6;margin-top:3px}
+.chat-input{padding:1rem;border-top:1px solid var(--border);display:flex;gap:8px}
+.chat-input input{flex:1;padding:9px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none}
+.chat-input input:focus{border-color:var(--accent)}
+.chat-send{padding:9px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:background 0.15s}
+.chat-send:hover{background:var(--accent2)}
+
+/* NOTIFS */
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:1rem 1.25rem;border-bottom:1px solid var(--border);transition:background 0.1s}
+.notif-item:hover{background:var(--bg3)}
+.notif-item:last-child{border-bottom:none}
+.notif-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.notif-body{flex:1}
+.notif-title{font-size:13px;font-weight:500}
+.notif-desc{font-size:12px;color:var(--text2);margin-top:2px}
+.notif-time{font-size:11px;color:var(--text3);margin-top:4px}
+.unread-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:6px}
+
+/* MODAL */
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(2px)
+    }
+
+        .modal-backdrop.open {
+            display: flex
+        }
+
+    .modal {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.75rem;
+        width: 460px;
+        min-width: 460px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        z-index: 1001;
+        box-sizing: border-box
+    }
+.modal-title{font-size:18px;font-weight:500;letter-spacing:-0.3px;margin-bottom:1.5rem}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* API SETUP */
+.api-banner{background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;display:flex;align-items:center;gap:10px}
+.api-banner svg{width:16px;height:16px;color:var(--accent);flex-shrink:0}
+
+/* DIVIDER */
+.divider{font-size:12px;color:var(--text3);text-align:center;margin:1rem 0;position:relative}
+.divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
+.divider span{background:var(--bg2);padding:0 10px;position:relative}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text2)}
+.empty-state svg{width:48px;height:48px;opacity:0.3;margin-bottom:1rem;display:block;margin-left:auto;margin-right:auto}
+.empty-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:6px}
+.empty-sub{font-size:13px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--bg2);padding:4px;border-radius:10px;margin-bottom:1.5rem;width:fit-content;border:1px solid var(--border)}
+.tab{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);transition:all 0.15s}
+.tab.active{background:var(--bg4);color:var(--text)}
+
+/* API CONFIG */
+.api-config{display:flex;gap:8px;margin-bottom:1.5rem}
+.api-config input{flex:1;max-width:300px}
+
+    div.modal {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        height: auto !important;
+        background-color: var(--bg2) !important;
+        display: block !important;
+    }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page" class="active">
+  <div id="login-form-container">
+    <div class="login-box">
+      <div class="login-brand">
+        <div class="login-brand-icon">T</div>
+        <div class="login-brand-name">TeamFlow</div>
+      </div>
+      <div class="login-title">Hoş geldiniz</div>
+      <div class="login-sub">Hesabınıza giriş yapın</div>
+      <div class="error-msg" id="login-error"></div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="login-email" placeholder="ornek@sirket.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Şifre</label>
+        <input type="password" class="form-input" id="login-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Giriş yap</button>
+      <p style="text-align:center;margin-top:1.25rem;font-size:13px;color:var(--text2)">
+        Hesabınız yok mu? <span class="link" onclick="showRegister()">Kayıt olun</span>
+      </p>
+    </div>
+    <div style="text-align:center;margin-top:1rem">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px">API Adresi</div>
+      <div style="display:flex;gap:6px;justify-content:center">
+        <input type="text" class="form-input" id="api-url" value="https://localhost:7102" style="max-width:240px;font-size:12px;padding:7px 12px;font-family:'DM Mono',monospace">
+        <button class="btn btn-sm" onclick="saveApiUrl()">Kaydet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div id="register-page" style="display:none;min-height:100vh;align-items:center;justify-content:center;background:var(--bg)">
+  <div class="login-box">
+    <div class="login-brand">
+      <div class="login-brand-icon">T</div>
+      <div class="login-brand-name">TeamFlow</div>
+    </div>
+    <div class="login-title">Hesap oluşturun</div>
+    <div class="login-sub">Ücretsiz başlayın</div>
+    <div class="error-msg" id="reg-error"></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Ad</label>
+        <input type="text" class="form-input" id="reg-fname" placeholder="Ad">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Soyad</label>
+        <input type="text" class="form-input" id="reg-lname" placeholder="Soyad">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="reg-email" placeholder="ornek@sirket.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Şifre <span style="font-size:11px;color:var(--text3)">(min. 8 karakter, büyük harf, rakam)</span></label>
+      <input type="password" class="form-input" id="reg-password" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary" onclick="doRegister()">Kayıt ol</button>
+    <p style="text-align:center;margin-top:1.25rem;font-size:13px;color:var(--text2)">
+      Zaten hesabınız var mı? <span class="link" onclick="showLogin()">Giriş yapın</span>
+    </p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-page">
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-name">TeamFlow</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Ana</div>
+      <div class="nav-item active" onclick="nav('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-section">Yönetim</div>
+      <div class="nav-item" onclick="nav('teams',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Takımlar
+      </div>
+      <div class="nav-item" onclick="nav('projects',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Projeler
+      </div>
+      <div class="nav-item" onclick="nav('sprints',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Sprintler
+      </div>
+      <div class="nav-item" onclick="nav('tasks',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Görevler
+      </div>
+      <div class="nav-section">İletişim</div>
+      <div class="nav-item" onclick="nav('messages',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Mesajlar
+      </div>
+      <div class="nav-item" onclick="nav('notifications',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Bildirimler
+        <span id="notif-badge" class="badge badge-red hidden" style="margin-left:auto;font-size:10px"></span>
+      </div>
+    </nav>
+    <div class="sidebar-user">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-meta">
+          <div class="user-name" id="user-name-display">-</div>
+          <div class="user-role">Member</div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()" title="Çıkış">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="section active">
+      <div class="topbar">
+        <div class="topbar-title">Dashboard</div>
+      </div>
+      <div class="content">
+        <div class="api-config">
+          <input type="text" class="form-input" id="api-config-input" placeholder="https://localhost:7102" style="font-family:'DM Mono',monospace;font-size:12px">
+          <button class="btn" onclick="updateApi()">Bağlan</button>
+        </div>
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Takımlar</div>
+            <div class="stat-value" id="d-teams">—</div>
+            <div class="stat-sub">Üye olduğunuz</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Projeler</div>
+            <div class="stat-value" id="d-projects">—</div>
+            <div class="stat-sub">Aktif proje</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Görevler</div>
+            <div class="stat-value" id="d-tasks">—</div>
+            <div class="stat-sub">Atanan görevler</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Bildirim</div>
+            <div class="stat-value" id="d-notifs">—</div>
+            <div class="stat-sub">Okunmamış</div>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
+          <div style="font-size:13px;font-weight:500;margin-bottom:1rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px">Hızlı erişim</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <button class="btn" onclick="nav('teams',document.querySelector('[onclick*=teams]'))" style="justify-content:center;padding:1rem;flex-direction:column;gap:8px;border-radius:10px">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>Takım oluştur</span>
+            </button>
+            <button class="btn" onclick="nav('tasks',document.querySelector('[onclick*=tasks]'))" style="justify-content:center;padding:1rem;flex-direction:column;gap:8px;border-radius:10px">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span>Görevler</span>
+            </button>
+            <button class="btn" onclick="nav('messages',document.querySelector('[onclick*=messages]'))" style="justify-content:center;padding:1rem;flex-direction:column;gap:8px;border-radius:10px">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Mesajlar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAMS -->
+    <div id="sec-teams" class="section">
+      <div class="topbar">
+        <div class="topbar-title">Takımlar</div>
+        <button class="btn" onclick="openModal('modal-team')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni takım
+        </button>
+      </div>
+      <div class="content">
+        <div id="teams-grid" class="cards-grid"></div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div id="sec-projects" class="section">
+      <div class="topbar">
+        <div class="topbar-title">Projeler</div>
+        <button class="btn" onclick="openModal('modal-project')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni proje
+        </button>
+      </div>
+      <div class="content">
+        <div id="projects-grid" class="cards-grid"></div>
+      </div>
+    </div>
+
+    <!-- SPRINTS -->
+    <div id="sec-sprints" class="section">
+      <div class="topbar">
+        <div class="topbar-title">Sprintler</div>
+        <button class="btn" onclick="openModal('modal-sprint')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni sprint
+        </button>
+      </div>
+      <div class="content">
+        <div id="sprints-list"></div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div id="sec-tasks" class="section">
+      <div class="topbar">
+        <div class="topbar-title">Görevler</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="form-input" id="sprint-filter" style="width:200px" onchange="loadTasks()">
+            <option value="">Sprint seçin</option>
+          </select>
+          <button class="btn" onclick="openModal('modal-task')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Yeni görev
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="board" id="task-board">
+          <div class="board-col">
+            <div class="board-col-header"><span class="board-col-title">Yapılacak</span><span class="board-count" id="cnt-0">0</span></div>
+            <div id="col-0"></div>
+          </div>
+          <div class="board-col">
+            <div class="board-col-header"><span class="board-col-title">Devam ediyor</span><span class="board-count" id="cnt-1">0</span></div>
+            <div id="col-1"></div>
+          </div>
+          <div class="board-col">
+            <div class="board-col-header"><span class="board-col-title">İncelemede</span><span class="board-count" id="cnt-2">0</span></div>
+            <div id="col-2"></div>
+          </div>
+          <div class="board-col">
+            <div class="board-col-header"><span class="board-col-title">Tamamlandı</span><span class="board-count" id="cnt-3">0</span></div>
+            <div id="col-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="sec-messages" class="section">
+      <div class="topbar">
+        <div class="topbar-title">Mesajlar</div>
+      </div>
+      <div class="content">
+        <div class="chat-layout">
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-header">Konuşmalar</div>
+            <div id="chat-list"></div>
+          </div>
+          <div class="chat-window">
+            <div class="chat-header" id="chat-header">
+              <div class="chat-avatar" id="chat-avatar">?</div>
+              <div class="chat-header-info">
+                <div class="chat-header-name" id="chat-name">Kişi seçin</div>
+                <div class="chat-header-status">çevrimiçi</div>
+              </div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+              <div style="text-align:center;color:var(--text3);font-size:13px;margin:auto">Bir konuşma seçin</div>
+            </div>
+            <div class="chat-input">
+              <input type="text" id="msg-input" placeholder="Mesaj yazın..." onkeydown="if(event.key==='Enter')sendMsg()">
+              <button class="chat-send" onclick="sendMsg()">Gönder</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div id="sec-notifications" class="section">
+      <div class="topbar">
+        <div class="topbar-title">Bildirimler</div>
+        <button class="btn btn-sm" onclick="markAllRead()">Tümünü okundu işaretle</button>
+      </div>
+      <div class="content">
+        <div id="notif-container" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-backdrop" id="modal-team">
+  <div class="modal">
+    <div class="modal-title">Yeni takım oluştur</div>
+    <div class="form-group"><label class="form-label">Takım adı</label><input type="text" class="form-input" id="t-name" placeholder="Backend Ekibi"></div>
+    <div class="form-group"><label class="form-label">Açıklama</label><textarea class="form-input" id="t-desc" placeholder="Takım hakkında kısa açıklama..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-team')">İptal</button>
+      <button class="btn btn-primary" style="width:auto" onclick="createTeam()">Oluştur</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-project">
+  <div class="modal">
+    <div class="modal-title">Yeni proje oluştur</div>
+    <div class="form-group"><label class="form-label">Proje adı</label><input type="text" class="form-input" id="p-name" placeholder="TeamFlow v2"></div>
+    <div class="form-group"><label class="form-label">Açıklama</label><textarea class="form-input" id="p-desc" placeholder="Proje açıklaması..."></textarea></div>
+    <div class="form-group"><label class="form-label">Takım</label><select class="form-input" id="p-team"><option value="">Takım seçin</option></select></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-project')">İptal</button>
+      <button class="btn btn-primary" style="width:auto" onclick="createProject()">Oluştur</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-sprint">
+  <div class="modal">
+    <div class="modal-title">Yeni sprint oluştur</div>
+    <div class="form-group"><label class="form-label">Sprint adı</label><input type="text" class="form-input" id="s-name" placeholder="Sprint 1"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Başlangıç</label><input type="date" class="form-input" id="s-start"></div>
+      <div class="form-group"><label class="form-label">Bitiş</label><input type="date" class="form-input" id="s-end"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Proje</label><select class="form-input" id="s-project"><option value="">Proje seçin</option></select></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-sprint')">İptal</button>
+      <button class="btn btn-primary" style="width:auto" onclick="createSprint()">Oluştur</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-task">
+  <div class="modal">
+    <div class="modal-title">Yeni görev oluştur</div>
+    <div class="form-group"><label class="form-label">Başlık</label><input type="text" class="form-input" id="tk-title" placeholder="Görev başlığı"></div>
+    <div class="form-group"><label class="form-label">Açıklama</label><textarea class="form-input" id="tk-desc" placeholder="Görev açıklaması..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Öncelik</label>
+        <select class="form-input" id="tk-priority">
+          <option value="0">Düşük</option>
+          <option value="1" selected>Orta</option>
+          <option value="2">Yüksek</option>
+          <option value="3">Kritik</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Bitiş tarihi</label><input type="date" class="form-input" id="tk-due"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-task')">İptal</button>
+      <button class="btn btn-primary" style="width:auto" onclick="createTask()">Oluştur</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let API = localStorage.getItem('tf_api') || 'https://localhost:7102';
+let token = localStorage.getItem('tf_token') || '';
+let userId = parseInt(localStorage.getItem('tf_userid') || '0');
+let currentChatReceiverId = 0;
+const priorityLabels = ['Düşük','Orta','Yüksek','Kritik'];
+const priorityBadge = ['badge-gray','badge-blue','badge-amber','badge-red'];
+
+document.getElementById('api-url').value = API;
+document.getElementById('api-config-input').value = API;
+
+function saveApiUrl(){ API = document.getElementById('api-url').value.trim(); localStorage.setItem('tf_api',API); }
+function updateApi(){ API = document.getElementById('api-config-input').value.trim(); localStorage.setItem('tf_api',API); loadDashboard(); }
+
+    async function apiFetch(path, opts = {}) {
+        const base = API.endsWith('/') ? API.slice(0, -1) : API;
+        const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) };
+        const res = await fetch(base + path, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
+        if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || e.title || res.statusText); }
+        if (res.status === 204) return null;
+        return res.json();
+    }
+
+function showPage(id){
+  ['login-page','register-page','app-page'].forEach(p=>{
+    const el=document.getElementById(p);
+    el.style.display='none';
+    el.classList.remove('active');
+  });
+  const target=document.getElementById(id);
+  target.style.display = id==='app-page' ? 'flex' : 'flex';
+  if(id==='login-page') target.style.display='flex';
+  if(id==='register-page') target.style.display='flex';
+  target.classList.add('active');
+}
+function showLogin(){ showPage('login-page'); }
+function showRegister(){ showPage('register-page'); }
+
+if(token){ showPage('app-page'); loadDashboard(); }
+
+    async function doLogin() {
+        saveApiUrl();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errEl = document.getElementById('login-error');
+        errEl.style.display = 'none';
+        try {
+            const data = await apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+            token = data.accessToken;
+            localStorage.setItem('tf_token', token);
+            const parts = token.split('.');
+            const payload = JSON.parse(atob(parts[1]));
+            userId = parseInt(payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || payload.sub || 0);
+            localStorage.setItem('tf_userid', userId);
+            const name = decodeURIComponent(escape((payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || '') + ' ' + (payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || '')));
+            document.getElementById('user-name-display').textContent = name.trim() || email;
+            document.getElementById('user-avatar').textContent = (name.trim() || email)[0].toUpperCase();
+            showPage('app-page');
+            loadDashboard();
+        } catch (e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+    }
+
+async function doRegister(){
+  const firstName = document.getElementById('reg-fname').value;
+  const lastName = document.getElementById('reg-lname').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+  const errEl = document.getElementById('reg-error');
+  errEl.style.display='none';
+    try
+    {
+        const data = await apiFetch('/api/auth/register',{method:'POST',body:JSON.stringify({firstName,lastName,email,password})});
+        token = data.accessToken;
+        localStorage.setItem('tf_token', token);
+        document.getElementById('user-name-display').textContent = firstName+' '+lastName;
+        document.getElementById('user-avatar').textContent = firstName[0].toUpperCase();
+        showPage('app-page');
+        loadDashboard();
+    } catch (e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+}
+
+function doLogout(){
+  token=''; userId=0;
+  localStorage.removeItem('tf_token');
+  localStorage.removeItem('tf_userid');
+  showLogin();
+}
+
+function nav(section, el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+section).classList.add('active');
+  if(el) el.classList.add('active');
+  if(section==='teams') loadTeams();
+  if(section==='projects') loadProjects();
+  if(section==='sprints') loadSprints();
+  if(section==='tasks'){ loadSprintFilter(); loadTasks(); }
+  if(section==='messages') loadChatList();
+  if(section==='notifications') loadNotifications();
+}
+
+function loading(el){ document.getElementById(el).innerHTML='<div style="color:var(--text3);font-size:13px;padding:2rem 0">Yükleniyor...</div>'; }
+
+function emptyState(el, msg){
+  document.getElementById(el).innerHTML=`<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg><div class="empty-title">Henüz veri yok</div><div class="empty-sub">${msg}</div></div>`;
+}
+
+async function loadDashboard(){
+    try
+    {
+        const teams = await apiFetch('/api/team/user/'+userId).catch(()=>[]);
+        document.getElementById('d-teams').textContent = (teams||[]).length;
+        let pCount=0;
+        for (const t of (teams || []))
+        {
+            const ps = await apiFetch('/api/project/team/' + t.id).catch(() => []); pCount += (ps || []).length;
+        }
+        document.getElementById('d-projects').textContent = pCount;
+        const tasks = await apiFetch('/api/task/assigned/'+userId).catch(()=>[]);
+        document.getElementById('d-tasks').textContent = (tasks||[]).length;
+        const notifs = await apiFetch('/api/notification/unread/'+userId).catch(()=>[]);
+        const nc = (notifs||[]).length;
+        document.getElementById('d-notifs').textContent = nc;
+        const badge = document.getElementById('notif-badge');
+        if (nc > 0)
+        {
+            badge.textContent = nc; badge.classList.remove('hidden');
+        }
+        else
+        {
+            badge.classList.add('hidden');
+        }
+  }catch(e){}
+}
+
+async function loadTeams(){
+  loading('teams-grid');
+  try{
+    const teams = await apiFetch('/api/team/user/'+userId);
+    if(!teams||!teams.length){ emptyState('teams-grid','Yeni takım oluşturmak için butona tıklayın.'); return; }
+    document.getElementById('teams-grid').innerHTML = teams.map(t=>`
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">${t.name}</div>
+          <span class="badge badge-blue">${t.memberCount||0} üye</span>
+        </div>
+        <div class="card-desc">${t.description||'Açıklama yok'}</div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:var(--text3)">#${t.id}</span>
+          <div class="card-actions">
+            <button class="btn btn-sm btn-danger" onclick="deleteItem('team',${t.id})">Sil</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){ document.getElementById('teams-grid').innerHTML=`<div style="color:var(--red);font-size:13px">${e.message}</div>`; }
+}
+
+async function loadProjects(){
+  loading('projects-grid');
+  try{
+    const teams = await apiFetch('/api/team/user/'+userId);
+    if(!teams||!teams.length){ emptyState('projects-grid','Önce bir takım oluşturun.'); return; }
+    let all=[];
+    for(const t of teams){ const ps=await apiFetch('/api/project/team/'+t.id).catch(()=>[]); all=[...all,...(ps||[]).map(p=>({...p,teamName:t.name}))]; }
+    if(!all.length){ emptyState('projects-grid','Yeni proje oluşturmak için butona tıklayın.'); return; }
+    document.getElementById('projects-grid').innerHTML = all.map(p=>`
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">${p.name}</div>
+          <span class="badge badge-purple">${p.teamName}</span>
+        </div>
+        <div class="card-desc">${p.description||'Açıklama yok'}</div>
+        <div class="card-footer">
+          <span style="font-size:11px;color:var(--text3)">#${p.id}</span>
+          <div class="card-actions">
+            <button class="btn btn-sm btn-danger" onclick="deleteItem('project',${p.id})">Sil</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){ document.getElementById('projects-grid').innerHTML=`<div style="color:var(--red);font-size:13px">${e.message}</div>`; }
+}
+
+async function loadSprints(){
+  loading('sprints-list');
+  try{
+    const teams = await apiFetch('/api/team/user/'+userId);
+    if(!teams||!teams.length){ emptyState('sprints-list','Önce takım ve proje oluşturun.'); return; }
+    let allProjects=[];
+    for(const t of teams){ const ps=await apiFetch('/api/project/team/'+t.id).catch(()=>[]); allProjects=[...allProjects,...(ps||[])]; }
+    let all=[];
+    for(const p of allProjects){ const ss=await apiFetch('/api/sprint/project/'+p.id).catch(()=>[]); all=[...all,...(ss||[]).map(s=>({...s,projectName:p.name}))]; }
+    if(!all.length){ emptyState('sprints-list','Yeni sprint oluşturmak için butona tıklayın.'); return; }
+    document.getElementById('sprints-list').innerHTML = all.map(s=>`
+      <div class="sprint-item">
+        <div class="sprint-item-header">
+          <div>
+            <div class="sprint-name">${s.name}</div>
+            <div class="sprint-meta">
+              <span>${s.projectName}</span>
+              <span>${new Date(s.startDate).toLocaleDateString('tr-TR')} – ${new Date(s.endDate).toLocaleDateString('tr-TR')}</span>
+            </div>
+          </div>
+          <div class="sprint-actions">
+            <span class="badge ${s.isActive?'badge-green':'badge-gray'}">${s.isActive?'Aktif':'Pasif'}</span>
+            ${!s.isActive?`<button class="btn btn-sm btn-green" onclick="activateSprint(${s.id})">Aktifleştir</button>`:''}
+            <button class="btn btn-sm btn-danger" onclick="deleteItem('sprint',${s.id})">Sil</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){ document.getElementById('sprints-list').innerHTML=`<div style="color:var(--red);font-size:13px">${e.message}</div>`; }
+}
+
+async function loadSprintFilter(){
+  const sel = document.getElementById('sprint-filter');
+  try{
+    const teams=await apiFetch('/api/team/user/'+userId);
+    let all=[];
+    for(const t of (teams||[])){ const ps=await apiFetch('/api/project/team/'+t.id).catch(()=>[]); for(const p of (ps||[])){ const ss=await apiFetch('/api/sprint/project/'+p.id).catch(()=>[]); all=[...all,...(ss||[])]; } }
+    sel.innerHTML='<option value="">Sprint seçin</option>'+all.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  }catch(e){}
+}
+
+async function loadTasks(){
+  const sprintId = document.getElementById('sprint-filter').value;
+  [0,1,2,3].forEach(i=>{ document.getElementById('col-'+i).innerHTML=''; document.getElementById('cnt-'+i).textContent='0'; });
+  if(!sprintId) return;
+  try{
+    const tasks = await apiFetch('/api/task/sprint/'+sprintId);
+    if(!tasks||!tasks.length) return;
+    const counts=[0,0,0,0];
+    tasks.forEach(t=>{
+      const s = t.status||0;
+      counts[s]++;
+      const card = document.createElement('div');
+      card.className='task-card';
+      card.innerHTML=`<div class="task-card-title">${t.title}</div>
+        <div class="task-card-meta">
+          <span class="badge ${priorityBadge[t.priority]||'badge-gray'}">${priorityLabels[t.priority]||'Orta'}</span>
+          ${t.dueDate?`<span class="task-due"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${new Date(t.dueDate).toLocaleDateString('tr-TR')}</span>`:''}
+        </div>`;
+      document.getElementById('col-'+s).appendChild(card);
+    });
+    counts.forEach((c,i)=>document.getElementById('cnt-'+i).textContent=c);
+  }catch(e){}
+}
+
+async function loadChatList(){
+  try{
+    const teams=await apiFetch('/api/team/user/'+userId);
+    let users=new Map();
+    for(const t of (teams||[])){
+      const members=await apiFetch('/api/team/'+t.id+'/members').catch(()=>[]);
+      (members||[]).forEach(m=>{ if(m.userId!==userId) users.set(m.userId,m); });
+    }
+    if(!users.size){ document.getElementById('chat-list').innerHTML='<div style="padding:1rem;font-size:13px;color:var(--text3)">Takım üyesi yok.</div>'; return; }
+    document.getElementById('chat-list').innerHTML=[...users.values()].map(m=>`
+      <div class="chat-item" onclick="selectChat(${m.userId},'${m.firstName||''} ${m.lastName||''}',this)">
+        <div class="chat-item-name">${m.firstName||''} ${m.lastName||''}</div>
+        <div class="chat-item-preview">Mesaj göndermek için tıklayın</div>
+      </div>`).join('');
+  }catch(e){ document.getElementById('chat-list').innerHTML='<div style="padding:1rem;font-size:13px;color:var(--text3)">Yüklenemedi.</div>'; }
+}
+
+async function selectChat(receiverId, name, el){
+  currentChatReceiverId=receiverId;
+  document.querySelectorAll('.chat-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('chat-name').textContent=name.trim()||('Kullanıcı #'+receiverId);
+  document.getElementById('chat-avatar').textContent=(name.trim()||'?')[0].toUpperCase();
+  document.getElementById('chat-messages').innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;margin:auto">Yükleniyor...</div>';
+  try{
+    const msgs=await apiFetch('/api/message/conversation/'+userId+'/'+receiverId);
+    const container=document.getElementById('chat-messages');
+    if(!msgs||!msgs.length){ container.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;margin:auto">Henüz mesaj yok. İlk mesajı siz gönderin!</div>'; return; }
+    container.innerHTML=msgs.map(m=>`<div class="msg ${m.senderId===userId?'msg-out':'msg-in'}">${m.content}<div class="msg-time">${new Date(m.createdAt).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div></div>`).join('');
+    container.scrollTop=container.scrollHeight;
+  }catch(e){ document.getElementById('chat-messages').innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;margin:auto">Mesajlar yüklenemedi.</div>'; }
+}
+
+async function sendMsg(){
+  const input=document.getElementById('msg-input');
+  const content=input.value.trim();
+  if(!content||!currentChatReceiverId) return;
+  try{
+    await apiFetch('/api/message',{method:'POST',body:JSON.stringify({content,senderId:userId,receiverId:currentChatReceiverId})});
+    input.value='';
+    selectChat(currentChatReceiverId,document.getElementById('chat-name').textContent,null);
+  }catch(e){ alert(e.message); }
+}
+
+async function loadNotifications(){
+  const container=document.getElementById('notif-container');
+  container.innerHTML='<div style="padding:1rem;font-size:13px;color:var(--text3)">Yükleniyor...</div>';
+  try{
+    const notifs=await apiFetch('/api/notification/unread/'+userId);
+    if(!notifs||!notifs.length){ container.innerHTML='<div style="padding:2rem;text-align:center;font-size:13px;color:var(--text3)">Okunmamış bildirim yok.</div>'; return; }
+    const icons=['🔔','✅','💬','📋','🏃','🎉'];
+    const colors=['rgba(79,142,247,0.15)','rgba(52,211,153,0.15)','rgba(251,191,36,0.15)','rgba(167,139,250,0.15)'];
+    container.innerHTML=notifs.map((n,i)=>`
+      <div class="notif-item">
+        <div class="notif-icon" style="background:${colors[i%colors.length]};font-size:16px">${icons[n.type%icons.length]}</div>
+        <div class="notif-body">
+          <div class="notif-title">${n.title}</div>
+          <div class="notif-desc">${n.message}</div>
+          <div class="notif-time">${new Date(n.createdAt).toLocaleString('tr-TR')}</div>
+        </div>
+        ${!n.isRead?'<div class="unread-dot"></div>':''}
+      </div>`).join('');
+  }catch(e){ container.innerHTML=`<div style="padding:1rem;font-size:13px;color:var(--red)">${e.message}</div>`; }
+}
+
+async function markAllRead(){
+  try{ await apiFetch('/api/notification/mark-all-read/'+userId,{method:'PATCH'}); loadNotifications(); loadDashboard(); }
+  catch(e){ alert(e.message); }
+}
+
+function openModal(id){
+  if(id==='modal-project') fillTeamSelect();
+  if(id==='modal-sprint') fillProjectSelect();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+async function fillTeamSelect(){
+  const sel=document.getElementById('p-team');
+  try{ const teams=await apiFetch('/api/team/user/'+userId); sel.innerHTML='<option value="">Takım seçin</option>'+(teams||[]).map(t=>`<option value="${t.id}">${t.name}</option>`).join(''); }catch(e){}
+}
+
+async function fillProjectSelect(){
+  const sel=document.getElementById('s-project');
+  try{
+    const teams=await apiFetch('/api/team/user/'+userId);
+    let all=[];
+    for(const t of (teams||[])){ const ps=await apiFetch('/api/project/team/'+t.id).catch(()=>[]); all=[...all,...(ps||[])]; }
+    sel.innerHTML='<option value="">Proje seçin</option>'+all.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  }catch(e){}
+}
+
+async function createTeam(){
+  const name=document.getElementById('t-name').value.trim();
+  const description=document.getElementById('t-desc').value.trim();
+  if(!name) return alert('Takım adı zorunludur.');
+  try{ await apiFetch('/api/team',{method:'POST',body:JSON.stringify({name,description})}); closeModal('modal-team'); loadTeams(); document.getElementById('t-name').value=''; document.getElementById('t-desc').value=''; }
+  catch(e){ alert(e.message); }
+}
+
+async function createProject(){
+  const name=document.getElementById('p-name').value.trim();
+  const description=document.getElementById('p-desc').value.trim();
+  const teamId=parseInt(document.getElementById('p-team').value);
+  if(!name||!teamId) return alert('Ad ve takım zorunludur.');
+  try{ await apiFetch('/api/project',{method:'POST',body:JSON.stringify({name,description,teamId})}); closeModal('modal-project'); loadProjects(); }
+  catch(e){ alert(e.message); }
+}
+
+async function createSprint(){
+  const name=document.getElementById('s-name').value.trim();
+  const startDate=document.getElementById('s-start').value;
+  const endDate=document.getElementById('s-end').value;
+  const projectId=parseInt(document.getElementById('s-project').value);
+  if(!name||!startDate||!endDate||!projectId) return alert('Tüm alanlar zorunludur.');
+  try{ await apiFetch('/api/sprint',{method:'POST',body:JSON.stringify({name,startDate,endDate,projectId})}); closeModal('modal-sprint'); loadSprints(); }
+  catch(e){ alert(e.message); }
+}
+
+async function createTask(){
+  const title=document.getElementById('tk-title').value.trim();
+  const description=document.getElementById('tk-desc').value.trim();
+  const priority=parseInt(document.getElementById('tk-priority').value);
+  const dueDate=document.getElementById('tk-due').value;
+  const sprintId=parseInt(document.getElementById('sprint-filter').value);
+  if(!title||!sprintId) return alert('Başlık ve sprint zorunludur.');
+  const body={title,description,priority,sprintId};
+  if(dueDate) body.dueDate=new Date(dueDate).toISOString();
+  try{ await apiFetch('/api/task',{method:'POST',body:JSON.stringify(body)}); closeModal('modal-task'); loadTasks(); }
+  catch(e){ alert(e.message); }
+}
+
+async function deleteItem(type, id){
+  if(!confirm(type+' silinsin mi?')) return;
+  const paths={team:'/api/team/',project:'/api/project/',sprint:'/api/sprint/'};
+  try{ await apiFetch(paths[type]+id,{method:'DELETE'}); if(type==='team')loadTeams(); else if(type==='project')loadProjects(); else loadSprints(); }
+  catch(e){ alert(e.message); }
+}
+
+async function activateSprint(id){
+  try{ await apiFetch('/api/sprint/'+id+'/activate',{method:'PATCH'}); loadSprints(); }
+  catch(e){ alert(e.message); }
+}
+
+document.querySelectorAll('.modal-backdrop').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
