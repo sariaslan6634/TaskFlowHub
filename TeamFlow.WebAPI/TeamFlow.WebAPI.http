@@ -1,0 +1,6 @@
+@TeamFlow.WebAPI_HostAddress = http://localhost:5151
+
+GET {{TeamFlow.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
